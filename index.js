@@ -21,23 +21,31 @@ const client = new Client({
   }
 });
 
+// Gerar QR Code para login
 client.on("qr", qr => {
   qrcode.generate(qr, { small: true });
 });
 
+// Confirmação quando o cliente está pronto
 client.on("ready", () => {
   console.log("✅ Cliente WhatsApp está pronto!");
 });
 
+// Processa as mensagens recebidas
 client.on("message", async msg => {
-  const resposta = processarMensagem(msg.from, msg.body);
+  // Chama a função que processa a mensagem e retorna a resposta
+  const resposta = await processarMensagem(msg.from, msg.body);
+
+  // Envia a resposta para o usuário
   if (resposta) {
     client.sendMessage(msg.from, resposta);
   }
 });
 
+// Inicia o cliente WhatsApp
 client.initialize();
 
+// Configuração do servidor Express
 const PORT = process.env.PORT || 3000;
 app.get("/", (req, res) => res.send("🤖 Chatbot rodando com WhatsApp Web.js"));
 app.listen(PORT, () => console.log(`🌐 Servidor rodando na porta ${PORT}`));
